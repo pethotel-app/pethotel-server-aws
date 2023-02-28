@@ -214,6 +214,9 @@ class UserIdSearchResource(Resource) :
 
             result_list = cursor.fetchall()
 
+            if len(result_list) == 0 :
+                return {"error" : "회원가입한 사람이 아닙니다"} , 400
+
             cursor.close()
             connection.close()
 
@@ -223,8 +226,10 @@ class UserIdSearchResource(Resource) :
             connection.close()
 
             return {"result" : "fail", "error" : str(e)}, 500
+        
+        email = result_list[0]["email"]
 
-        return {"result" : "success", "email" : result_list}, 200
+        return {"result" : "success", "email" : email}, 200
 
 # 비밀번호찾기
 class UserPasswordSearchResource(Resource) :
