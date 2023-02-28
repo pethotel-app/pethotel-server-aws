@@ -2,10 +2,13 @@ from datetime import datetime
 from flask import request
 from flask_jwt_extended import create_access_token, get_jwt, get_jwt_identity, jwt_required
 from flask_restful import Resource
+from config import Config
 from mysql_connection import get_connection
 from mysql.connector import Error
 from email_validator import validate_email, EmailNotValidError
 from utils import check_password, hash_password
+from datetime import datetime
+import boto3
 
 # 회원가입
 class UserRegisterResource(Resource) :
@@ -281,10 +284,7 @@ class UserChangePasswordResource(Resource) :
 
         return {"result" : "success"}, 200
 
-# 회원탈퇴
-class UserInfoDeleteResource(Resource) :
-    @jwt_required()
-    def delete(self) :
+
         jti = get_jwt()['jti']
         jwt_blacklist.add(jti)
 
@@ -315,8 +315,9 @@ class UserInfoDeleteResource(Resource) :
 
         return {"result" : "success"}, 200
 
-# 회원정보 조회
+# 회원정보
 class UserInfoResource(Resource) :
+    # 조회
     @jwt_required()
     def get(self) :
         user_id = get_jwt_identity()
@@ -355,11 +356,11 @@ class UserInfoResource(Resource) :
             return {"result" : "fail", "error" : str(e)}, 500
 
         return {"result" : "success", "user" : result_list}, 200
-
-# 회원정보 수정
-class UserInfoUpdateResource(Resource) :
+    
+    # 수정
     @jwt_required()
     def put(self) :
+    
         # { "name": "김이름,
         # "phone": "010-1234-5678"}
         
@@ -376,6 +377,135 @@ class UserInfoUpdateResource(Resource) :
                     where id = %s; '''
 
             record = (data['name'], data['phone'], user_id)
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+    
+    # 삭제(탈퇴)
+    @jwt_required()
+    def delete(self) :
+        jti = get_jwt()['jti']
+        jwt_blacklist.add(jti)
+
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''delete from user
+                    where id = %s ;'''
+
+            record = (user_id, )
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+
+# 회원정보 이미지
+class UserImageResource(Resource) :
+
+    # 이미지 등록
+    @jwt_required()
+    def put(self) :
+        # from=data
+        # photo : file
+
+        user_id = get_jwt_identity()
+
+        if 'photo' not in request.files :
+            return {'error' : '사진데이터 필수'}, 400
+        
+        file = request.files['photo']
+
+        if 'image' not in file.content_type :
+            return {'error' : '이미지 파일이 아닙니다.'}
+        
+        # 사진 S3에 저장
+        current_time = datetime.now()
+        new_file_name = current_time.isoformat().replace(':', '_') + '.jpg'
+        file.filename = new_file_name
+
+        client =  boto3.client('s3', aws_access_key_id= Config.ACCESS_KEY, aws_secret_access_key= Config.SECRET_ACCESS)
+
+        try :
+            client.upload_fileobj(file, Config.S3_BUCKET, new_file_name, ExtraArgs= {'ACL' : 'public-read', 'ContentType' : file.content_type})
+        
+        except Exception as e :
+            return {"error" : str(e)}, 500
+
+        # 저장된 사진의 imgUrl
+        imgUrl = Config.S3_LOCATION + new_file_name
+
+        # DB 저장
+        try :
+            connection = get_connection()
+
+            query = '''update user
+                    set
+                    userImgUrl = %s
+                    where id = %s;'''
+
+            record = (imgUrl, user_id)
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+            return {"error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+    
+    # 이미지 삭제
+    @jwt_required()
+    def delete(self) :
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''update user
+                    set
+                    userImgUrl = null
+                    where id = %s;'''
+
+            record = (user_id, )
 
             cursor = connection.cursor()
 

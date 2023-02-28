@@ -3,7 +3,7 @@ from flask_jwt_extended import JWTManager
 from flask_restful import Api
 
 from config import Config
-from resource.user import UserChangePasswordResource, UserIdSearchResource, UserInfoDeleteResource, UserInfoResource, UserInfoUpdateResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
+from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
 
 
 app = Flask(__name__)
@@ -28,8 +28,7 @@ api.add_resource(UserPasswordSearchResource, '/user/PasswordSearch')
 api.add_resource(UserChangePasswordResource, '/user/ChangePassword')
 
 api.add_resource(UserInfoResource, '/user/info')
-api.add_resource(UserInfoDeleteResource, '/user/info/delete')
-api.add_resource(UserInfoUpdateResource, '/user/info/update')
+api.add_resource(UserImageResource, '/user/profile')
 
 if __name__ == '__main__' :
     app.run()
