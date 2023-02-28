@@ -234,8 +234,8 @@ class UserIdSearchResource(Resource) :
 # 비밀번호찾기
 class UserPasswordSearchResource(Resource) :
     def post(self) :
-        # { "email": "abcd@naver.com",
-        # "phone": "010-1234-5678"}
+        # { "phone": "010-1234-5678",
+        # "email": "abcd@naver.com"}
 
         data = request.get_json()
 
@@ -244,7 +244,7 @@ class UserPasswordSearchResource(Resource) :
 
             query = '''select email
                     from user
-                    where phone = %s and email = %s; '''
+                    where phone = %s and email = %s ;'''
 
             record = (data["phone"], data["email"])
 
