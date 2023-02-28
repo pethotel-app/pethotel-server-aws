@@ -36,7 +36,7 @@ api.add_resource(UserInfoResource, '/user/info')
 api.add_resource(UserImageResource, '/user/profile')
 
 # 펫
-api.add_resource(PetListResource, 'pets')
+api.add_resource(PetListResource, '/pets/')
 
 if __name__ == '__main__' :
     app.run()
