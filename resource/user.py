@@ -234,4 +234,78 @@ class UserIdSearchResource(Resource) :
 # 비밀번호찾기
 class UserPasswordSearchResource(Resource) :
     def post(self) :
-        pass
+        # { "email": "abcd@naver.com",
+        # "phone": "010-1234-5678"}
+
+        data = request.get_json()
+
+        try :
+            connection = get_connection()
+
+            query = '''select email
+                    from user
+                    where phone = %s and email = %s; '''
+
+            record = (data["phone"], data["email"])
+
+            cursor = connection.cursor(dictionary=True)
+
+            cursor.execute(query, record)
+
+            result_list = cursor.fetchall()
+
+            if len(result_list) == 0 :
+                return {"error" : "회원가입한 사람이 아닙니다"} , 400
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+            return {"result" : "fail", "error" : str(e)}, 500
+        
+        email = result_list[0]["email"]
+
+        return {"result" : "success", "email" : email}, 200
+    
+# 비밀번호변경
+class UserChangePasswordResource(Resource) :
+    def post(self) :
+        # {"email": "abcd@naver.com"
+        # "password": "1234"}
+        data = request.get_json()
+
+        if len(data["password"]) < 4 or len(data["password"]) > 20 :
+            return {'error' : '비밀번호 길이 확인'}, 400
+
+        hashed_password = hash_password(data["password"])
+
+        try :
+            connection = get_connection()
+
+            query = '''update user
+                    set
+                    password = %s
+                    where email = %s ; '''
+
+            record = (hashed_password, data["email"])
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
