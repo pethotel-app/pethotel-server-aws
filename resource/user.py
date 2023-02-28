@@ -121,82 +121,6 @@ class UserLogoutResource(Resource) :
 
         return {'result' : 'success'}, 200
 
-# 회원탈퇴
-class UserInfoDeleteResource(Resource) :
-    @jwt_required()
-    def delete(self) :
-        jti = get_jwt()['jti']
-        jwt_blacklist.add(jti)
-
-        user_id = get_jwt_identity()
-
-        try :
-            connection = get_connection()
-
-            query = '''delete from user
-                    where id = %s ;'''
-
-            record = (user_id, )
-
-            cursor = connection.cursor()
-
-            cursor.execute(query, record)
-
-            connection.commit()
-
-            cursor.close()
-            connection.close()
-
-        except Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-            return {"result" : "fail", "error" : str(e)}, 500
-
-        return {"result" : "success"}, 200
-
-# 회원정보 조회
-class UserInfoResource(Resource) :
-    @jwt_required()
-    def get(self) :
-        user_id = get_jwt_identity()
-
-        try :
-            connection = get_connection()
-
-            query = '''select id, name, phone, email, createdAt
-                    from user
-                    where id = %s ;'''
-
-            record = ( user_id, )
-
-            cursor = connection.cursor(dictionary= True)
-
-            cursor.execute(query, record)
-
-            result_list = cursor.fetchall()
-
-            if len(result_list) == 0 :
-                return {"error" : "회원가입한 사람이 아닙니다"} , 400
-
-            i = 0
-            for row in result_list :
-                result_list[i]['createdAt'] = row['createdAt'].isoformat()
-                result_list[i]['updatedAt'] = row['updatedAt'].isoformat()
-                i = i + 1
-
-            cursor.close()
-            connection.close()
-
-        except Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-
-            return {"result" : "fail", "error" : str(e)}, 500
-
-        return {"result" : "success", "user" : result_list}, 200
-
 # 아이디찾기
 class UserIdSearchResource(Resource) :
     def post(self) :
@@ -279,25 +203,179 @@ class UserPasswordSearchResource(Resource) :
     
 # 비밀번호변경
 class UserChangePasswordResource(Resource) :
+    @jwt_required(optional=True)
     def post(self) :
+        # 비회원
         # {"email": "abcd@naver.com"
-        # "password": "1234"}
+        # "newPassword": "1234"}
+
+        # 회원
+        # {"password": "1234",
+        # "newPassword": "123456"}
+
         data = request.get_json()
 
-        if len(data["password"]) < 4 or len(data["password"]) > 20 :
-            return {'error' : '비밀번호 길이 확인'}, 400
+        # 토큰이 없을때는 None값이 저장
+        user_id = get_jwt_identity()
 
-        hashed_password = hash_password(data["password"])
+        hashed_password = hash_password(data["newPassword"])
+
+        try :
+            connection = get_connection()
+			
+            # 비회원이 비밀번호 변경
+            if user_id is None :
+                
+                query = '''update user
+                        set
+                        password = %s
+                        where email = %s ; '''
+                
+                record = (hashed_password, data["email"])
+
+                cursor = connection.cursor()
+
+                cursor.execute(query, record)
+
+			# 회원이 비밀번호 변경
+            else :
+
+                query = '''select password
+                    from user
+                    where id = %s ;'''
+
+                record = (user_id, )
+
+                cursor = connection.cursor(dictionary=True)
+
+                cursor.execute(query, record)
+
+                result_list = cursor.fetchall()
+
+                check = check_password( data['password'], result_list[0]['password'] )
+
+                if check == False :
+                    return {"error" : "비밀번호가 일치하지 않습니다"} , 400
+
+                query = '''update user
+                        set
+                        password = %s
+                        where id = %s ; '''
+
+                record = (hashed_password, user_id)
+
+                cursor = connection.cursor()
+
+                cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+
+# 회원탈퇴
+class UserInfoDeleteResource(Resource) :
+    @jwt_required()
+    def delete(self) :
+        jti = get_jwt()['jti']
+        jwt_blacklist.add(jti)
+
+        user_id = get_jwt_identity()
 
         try :
             connection = get_connection()
 
-            query = '''update user
-                    set
-                    password = %s
-                    where email = %s ; '''
+            query = '''delete from user
+                    where id = %s ;'''
 
-            record = (hashed_password, data["email"])
+            record = (user_id, )
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+
+# 회원정보 조회
+class UserInfoResource(Resource) :
+    @jwt_required()
+    def get(self) :
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''select id, name, phone, email, createdAt, userImgUrl
+                    from yh_project_db.user
+                    where id = %s ;'''
+
+            record = ( user_id, )
+
+            cursor = connection.cursor(dictionary= True)
+
+            cursor.execute(query, record)
+
+            result_list = cursor.fetchall()
+
+            if len(result_list) == 0 :
+                return {"error" : "회원가입한 사람이 아닙니다"} , 400
+
+            i = 0
+            for row in result_list :
+                result_list[i]['createdAt'] = row['createdAt'].isoformat()
+                i = i + 1
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success", "user" : result_list}, 200
+
+# 회원정보 수정
+class UserInfoUpdateResource(Resource) :
+    @jwt_required()
+    def put(self) :
+        # { "name": "김이름,
+        # "phone": "010-1234-5678"}
+        
+        data = request.get_json()
+        user_id = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = ''' update user
+                    set
+                    name = %s,
+                    phone = %s
+                    where id = %s; '''
+
+            record = (data['name'], data['phone'], user_id)
 
             cursor = connection.cursor()
 
