@@ -5,7 +5,11 @@ from flask_restful import Api
 from config import Config
 from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
 
-
+# branch test
+# branch test
+# branch test
+# branch test
+# branch test
 app = Flask(__name__)
 
 app.config.from_object(Config)
