@@ -164,7 +164,7 @@ class UserInfoResource(Resource) :
         try :
             connection = get_connection()
 
-            query = '''select name, phone, email
+            query = '''select id, name, phone, email, createdAt
                     from user
                     where id = %s ;'''
 
@@ -176,6 +176,15 @@ class UserInfoResource(Resource) :
 
             result_list = cursor.fetchall()
 
+            if len(result_list) == 0 :
+                return {"error" : "회원가입한 사람이 아닙니다"} , 400
+
+            i = 0
+            for row in result_list :
+                result_list[i]['createdAt'] = row['createdAt'].isoformat()
+                result_list[i]['updatedAt'] = row['updatedAt'].isoformat()
+                i = i + 1
+
             cursor.close()
             connection.close()
 
@@ -186,10 +195,7 @@ class UserInfoResource(Resource) :
 
             return {"result" : "fail", "error" : str(e)}, 500
 
-        if len(result_list) == 0 :
-            return {"error" : "잘못된 유저 아이디"}, 400
-
-        return {"result" : "success", "user" : result_list[0]}, 200
+        return {"result" : "success", "user" : result_list}, 200
 
 # 아이디찾기
 class UserIdSearchResource(Resource) :
