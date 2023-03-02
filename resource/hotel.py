@@ -19,7 +19,7 @@ class HotelSearchResource(Resource) :
                     from yh_project_db.hotel h
                     left join yh_project_db.follows f on f.hotelId = h.id and f.userId= 2
                     left join yh_project_db.reviews r on r.hotelId = h.id
-                    where h.title like '%''' + keyword + '''%'
+                    where h.title like '%''' + keyword + '''%' or h.addr like '%''' + keyword + '''%'
                     group by h.id
                     limit ''' + offset + ''' , ''' + limit + ''' ; '''
 
