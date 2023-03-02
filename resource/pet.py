@@ -11,6 +11,7 @@ class PetListResource(Resource) :
 
 
 
+    # 반려동물 등록 API
     @jwt_required()
     def post(self) :
 
@@ -69,7 +70,7 @@ class PetListResource(Resource) :
         # 클라이언트에 보내줄 정보(json)와 http 상태 코드를
         # 리턴한다.
         return {"result" : "success"} , 200
-
+    # 반려동물 조회 API
     @jwt_required()
     def get(self) :
 
@@ -103,7 +104,7 @@ class PetListResource(Resource) :
     
 
 class PetResource(Resource) :
-
+    # 반려동물 수정 API
     @jwt_required()
     def put(self, petId) :
 
@@ -144,7 +145,7 @@ class PetResource(Resource) :
 
         return {'result' : 'success' }, 200
 
-
+    # 반려동물 삭제 API
     @jwt_required()
     def delete(self,petId) :
 

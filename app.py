@@ -4,6 +4,7 @@ from flask_restful import Api
 
 from config import Config
 from resource.pet import PetListResource, PetResource
+from resource.reservation import ReservationResource
 from resource.review import ReviewListResource
 from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
 
@@ -42,6 +43,9 @@ api.add_resource(PetResource, '/pets/<int:petId>')
 
 # 리뷰
 api.add_resource(ReviewListResource, '/review/<int:hotelId>')
+
+# 예약
+api.add_resource(ReservationResource, '/reservation')
 
 if __name__ == '__main__' :
     app.run()
