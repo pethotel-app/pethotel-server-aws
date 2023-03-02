@@ -71,6 +71,7 @@ class FavoriteResource(Resource) :
         return {"result" : "success"}, 200
 
 class FavoriteListResource(Resource) :
+    # 내 찜목록 가져오기
     @jwt_required()
     def get(self) :
 
@@ -81,7 +82,12 @@ class FavoriteListResource(Resource) :
         try :
             connection = get_connection()
 
-            query = '''
+            query = '''select f.hotelId, h.title, h.imgUrl, ifnull(avg(r.rating),0) as avg, ifnull(count(r.hotelId),0) as cnt
+                    from yh_project_db.follows f
+                    left join yh_project_db.hotel h on f.hotelId = h.id
+                    left join yh_project_db.reviews r on r.hotelId = h.id
+                    where f.userId = %s
+                    group by h.id
                     limit ''' + offset + ''' , ''' + limit + ''' ; '''
 
             record = (user_id, )
@@ -91,6 +97,11 @@ class FavoriteListResource(Resource) :
             cursor.execute(query, record)
 
             result_list = cursor.fetchall()
+
+            i = 0
+            for row in result_list :
+                result_list[i]['avg'] = float(row['avg'])
+                i = i + 1
 
             cursor.close()
             connection.close()
