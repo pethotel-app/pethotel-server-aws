@@ -4,6 +4,7 @@ from flask_restful import Api
 
 from config import Config
 from resource.pet import PetListResource, PetResource
+from resource.review import ReviewListResource
 from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
 
 # branch test
@@ -38,6 +39,9 @@ api.add_resource(UserImageResource, '/user/profile')
 # 펫
 api.add_resource(PetListResource, '/pets/')
 api.add_resource(PetResource, '/pets/<int:petId>')
+
+# 리뷰
+api.add_resource(ReviewListResource, '/review/<int:hotelId>')
 
 if __name__ == '__main__' :
     app.run()
