@@ -69,3 +69,107 @@ class PetListResource(Resource) :
         # 클라이언트에 보내줄 정보(json)와 http 상태 코드를
         # 리턴한다.
         return {"result" : "success"} , 200
+
+    @jwt_required()
+    def get(self) :
+
+        try :
+            connection = get_connection()
+
+            query = '''select id,userId,petImgUrl,name,classification,species,age,weight,gender
+                    from pet;'''
+
+            ## 중요!!!! select 문은 
+            ## 커서를 가져올 때 dictionary = True로 해준다
+            cursor = connection.cursor(dictionary=True)
+
+            cursor.execute(query)
+
+            result_list=cursor.fetchall()
+
+            print(result_list)
+            
+
+
+            cursor.close()
+            connection.close()
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return{"result":"fail","error":str(e)}, 500
+        
+        return {"result" : 'success','items':result_list,'count':len(result_list)}, 200
+    
+
+class PetResource(Resource) :
+
+    @jwt_required()
+    def put(self, petId) :
+
+
+        data = request.get_json()
+
+        user_id = get_jwt_identity()
+
+        ### todo : 이미지 처리
+        try :
+            connection = get_connection()
+            query = '''update pet
+                    name = %s,
+                    classification = %s,
+                    species = %s,
+                    age = %s,
+                    weight = %s,
+                    gender = %s
+                    where id = %s and userId = %s;'''
+            
+            record = (data['name'],data['classification'],data['species'],data['age'],
+                      data['weight'],data['gender'],petId,user_id)
+            
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return {'result' : 'fail', 'error' : str(e)}, 500
+
+        return {'result' : 'success' }, 200
+
+
+    @jwt_required()
+    def delete(self,petId) :
+
+        user_id=get_jwt_identity()
+
+        try :
+            connection = get_connection()
+            query = '''delete from pet
+                    where id = %s and userId = %s;'''
+            record = (petId,user_id)
+
+            cursor = connection.cursor()
+
+            cursor.execute(query,record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return{'result':'fail','error':str(e)}, 500
+
+        return {'result':'success'},200
+
+
