@@ -27,7 +27,7 @@ api.add_resource(UserLogoutResource, '/user/logout')
 
 api.add_resource(UserIdSearchResource, '/user/id/search')
 api.add_resource(UserPasswordSearchResource, '/user/password/search')
-api.add_resource(UserChangePasswordResource, '/user/change/password')
+api.add_resource(UserChangePasswordResource, '/user/changpassword')
 
 api.add_resource(UserInfoResource, '/user/info')
 api.add_resource(UserImageResource, '/user/profile')
