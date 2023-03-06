@@ -50,7 +50,7 @@ class PointSearchResource(Resource) :
 
             return {'error' : '잘못된 유저 아이디입니다.'}, 400
 
-        return{'result' : 'success', 'user' : resultList[0]}
+        return{'result' : 'success', 'user' : resultList}
 
 # 유저 포인트 적립
 class PointAddResource(Resource) : 
