@@ -165,3 +165,46 @@ class HotelSearchRankResource(Resource) :
             return {"error" : str(e)}, 500
 
         return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
+    
+
+
+# 무게별 가격
+class HotelPriceResource(Resource) :
+    @jwt_required(optional=True)
+    def get(self,hotelId) :
+
+        userId = get_jwt_identity()
+
+        try :
+
+            connection = get_connection()
+
+            query = '''select * from price 
+                     where hotelId = %s;'''
+            
+            record = (hotelId,)
+
+            cursor = connection.cursor(dictionary=True)
+
+
+            cursor.execute(query,record)
+
+            resultList = cursor.fetchall()
+
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+
+
+            cursor.close()
+            connection.close()
+
+            return{'error' : str(e)}, 500
+
+        if len(resultList) == 0 :
+
+            return {'error' : '잘못된 호텔 아이디입니다.'}, 400
+
+        return{'result' : 'success', 'items' : resultList}

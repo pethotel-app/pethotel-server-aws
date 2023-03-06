@@ -4,8 +4,8 @@ from flask_restful import Api
 from config import Config
 from resource.benefit import CouponSearchResource, CouponUseResource, PointAddResource, PointSearchResource
 from resource.favorite import FavoriteListResource, FavoriteResource
-from resource.hotel import HotelInfoResource, HotelSearchRankResource, HotelSearchResource
-from resource.pet import PetListResource, PetResource
+from resource.hotel import HotelInfoResource, HotelPriceResource, HotelSearchRankResource, HotelSearchResource
+from resource.pet import  PetListResource, PetResource
 from resource.reservation import ReservationResource
 from resource.review import ReviewListResource
 from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
@@ -39,6 +39,7 @@ api.add_resource(CouponSearchResource,'/benefit/coupon')
 api.add_resource(CouponUseResource, '/benefit/coupon/<int:couponId>')
 
 api.add_resource(HotelInfoResource, '/hotel/<int:hotelId>')
+api.add_resource(HotelPriceResource,'/hotel/price/<int:hotelId>')
 
 api.add_resource(FavoriteResource, '/favorite/<int:hotelId>')
 api.add_resource(FavoriteListResource, '/favorite')
