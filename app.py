@@ -7,7 +7,7 @@ from resource.favorite import FavoriteListResource, FavoriteResource
 from resource.hotel import HotelInfoResource, HotelPriceResource, HotelSearchRankResource, HotelSearchResource
 from resource.pet import  PetListResource, PetResource
 from resource.reservation import ReservationResource
-from resource.review import ReviewListResource
+from resource.review import MyReviewCheckResource, ReviewListResource
 from resource.user import UserChangePasswordResource, UserIdSearchResource, UserImageResource, UserInfoResource, UserLoginResource, UserLogoutResource, UserPasswordSearchResource, UserRegisterResource, jwt_blacklist
 
 app = Flask(__name__)
@@ -51,6 +51,7 @@ api.add_resource(PetListResource, '/pets/')
 api.add_resource(PetResource, '/pets/<int:petId>')
 
 api.add_resource(ReviewListResource, '/review/<int:hotelId>')
+api.add_resource(MyReviewCheckResource,'/review/my')
 
 api.add_resource(ReservationResource, '/reservation')
 

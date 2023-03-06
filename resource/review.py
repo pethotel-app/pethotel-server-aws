@@ -164,7 +164,7 @@ class ReviewListResource(Resource) :
                     content = %s,
                     rating = %s,
                     imgUrl = %s
-                    userId=%s and hotelId = %s;'''
+                    where userId=%s and hotelId = %s;'''
             record = (content,rating,imgUrl,user_id,hotelId)
             cursor = connection.cursor()
             cursor.execute(query,record)
@@ -207,3 +207,46 @@ class ReviewListResource(Resource) :
             return{'result':'fail','error':str(e)}, 500
 
         return {'result':'success'},200
+    
+
+
+# 내 리뷰 조회
+class MyReviewCheckResource(Resource):
+    
+    @jwt_required()
+    
+    def get(self):
+
+        userId = get_jwt_identity()
+
+        try :
+            connection = get_connection()
+
+            query = '''select * from reviews
+                    where userId = %s;'''
+            record = (userId,)
+
+            ## 중요!!!! select 문은 
+            ## 커서를 가져올 때 dictionary = True로 해준다
+            cursor = connection.cursor(dictionary=True)
+
+            cursor.execute(query,record)
+
+            resultList=cursor.fetchall()
+            
+            i = 0
+            for row in resultList :
+                resultList[i]['createdAt']=row['createdAt'].isoformat()
+                resultList[i]['updatedAt']=row['updatedAt'].isoformat()
+                i = i+1
+            # print(result_list)
+
+            cursor.close()
+            connection.close()
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+            return{"result":"fail","error":str(e)}, 500
+        
+        return {"result" : 'seccess','items':resultList,'count':len(resultList)}, 200
