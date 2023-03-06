@@ -523,3 +523,6 @@ class UserImageResource(Resource) :
             return {"result" : "fail", "error" : str(e)}, 500
 
         return {"result" : "success"}, 200
+
+
+
