@@ -117,7 +117,7 @@ class PetResource(Resource) :
         try :
             connection = get_connection()
             query = '''update pet
-                    name = %s,
+                    set name = %s,
                     classification = %s,
                     species = %s,
                     age = %s,
