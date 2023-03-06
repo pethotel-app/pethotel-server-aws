@@ -33,7 +33,7 @@ class PetListResource(Resource) :
             query = '''insert into pet
                     (userId,name,classification,species,age,weight,gender)
                     values
-                    (%s,%s,%s,%s,%s,%s.%s);'''
+                    (%s,%s,%s,%s,%s,%s,%s);'''
             ### 3. 쿼리에 매칭되는 변수 처리 해준다. 튜플로!
             record = ( user_id,data['name'],data['classification'],
                       data['species'],data['age'],data['weight'],data['gender'] )
