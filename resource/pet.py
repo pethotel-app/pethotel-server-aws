@@ -69,17 +69,23 @@ class PetListResource(Resource) :
     # 반려동물 조회 API
     @jwt_required()
     def get(self) :
+
+        user_id = get_jwt_identity()
+
         try :
             connection = get_connection()
 
             query = '''select id,userId,petImgUrl,name,classification,species,age,weight,gender
-                    from pet;'''
+                    from pet
+                    where userId=%s;'''
 
             ## 중요!!!! select 문은 
             ## 커서를 가져올 때 dictionary = True로 해준다
             cursor = connection.cursor(dictionary=True)
 
-            cursor.execute(query)
+            record = (user_id,)
+
+            cursor.execute(query, record)
 
             result_list=cursor.fetchall()
 
