@@ -98,7 +98,14 @@ class ReviewListResource(Resource) :
 
             cursor.execute(query,record)
 
-            result_list=cursor.fetchall()
+            resultList=cursor.fetchall()
+
+            i = 0
+            for row in resultList :
+                resultList[i]['createdAt']=row['createdAt'].isoformat()
+                resultList[i]['updatedAt']=row['updatedAt'].isoformat()
+                i = i+1
+
 
             # print(result_list)
 
@@ -110,7 +117,7 @@ class ReviewListResource(Resource) :
             connection.close()
             return{"result":"fail","error":str(e)}, 500
         
-        return {"result" : 'seccess','items':result_list,'count':len(result_list)}, 200
+        return {"result" : 'seccess','items':resultList,'count':len(resultList)}, 200
 
     # 리뷰 수정 API
     @jwt_required()
