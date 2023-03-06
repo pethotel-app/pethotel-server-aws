@@ -1,16 +1,11 @@
 from flask import request
 from flask_restful import Resource
-
 from mysql_connection import get_connection
 from mysql.connector import Error
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import get_jwt_identity
 
 class PetListResource(Resource) : 
-    
-
-
-
     # 반려동물 등록 API
     @jwt_required()
     def post(self) :
@@ -70,10 +65,10 @@ class PetListResource(Resource) :
         # 클라이언트에 보내줄 정보(json)와 http 상태 코드를
         # 리턴한다.
         return {"result" : "success"} , 200
+    
     # 반려동물 조회 API
     @jwt_required()
     def get(self) :
-
         try :
             connection = get_connection()
 
@@ -101,7 +96,6 @@ class PetListResource(Resource) :
             return{"result":"fail","error":str(e)}, 500
         
         return {"result" : 'success','items':result_list,'count':len(result_list)}, 200
-    
 
 class PetResource(Resource) :
     # 반려동물 수정 API
@@ -172,5 +166,3 @@ class PetResource(Resource) :
             return{'result':'fail','error':str(e)}, 500
 
         return {'result':'success'},200
-
-

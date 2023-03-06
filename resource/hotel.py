@@ -46,18 +46,8 @@ class HotelSearchResource(Resource) :
 
         return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
     
-
-
-
-
-
-
-
-
-
 # 호텔 상세정보
 class HotelInfoResource(Resource) :
-
     @jwt_required(optional=True)
     def get(self, hotelId) :
 

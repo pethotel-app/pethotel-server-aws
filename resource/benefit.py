@@ -4,10 +4,7 @@ from flask_restful import Resource
 from mysql_connection import get_connection
 from mysql.connector import Error
 
-
-
 # 유저 포인트 조회
-
 class PointSearchResource(Resource) :
     @jwt_required()
     def get(self) :
@@ -56,9 +53,7 @@ class PointSearchResource(Resource) :
         return{'result' : 'success', 'user' : resultList[0]}
 
 # 유저 포인트 적립
-
 class PointAddResource(Resource) : 
-    
     @jwt_required()
     def post(self) :
         
@@ -96,12 +91,9 @@ class PointAddResource(Resource) :
 
         return {"result" : "success"} , 200
 
-
-
 # 쿠폰조회
 class CouponSearchResource(Resource) :
     @jwt_required()
-    
     def get(self) :
 
         userId = get_jwt_identity()
@@ -137,9 +129,7 @@ class CouponSearchResource(Resource) :
         return{'result' : 'success' , 'items' : result_list, 'count' : len(result_list)}
 
 # 쿠폰 사용
-
 class CouponUseResource(Resource) :
-
     @jwt_required()
     def delete(self,couponId) :
 

@@ -77,7 +77,6 @@ class ReviewListResource(Resource) :
         
         return {'result':'success'},200
 
-    
     # 특정 호텔에 대한 리뷰 가져오는 API
     # 유저의 name과 user의 프로필 사진 + 리뷰 테이블의 데이터
     @jwt_required()
@@ -181,7 +180,6 @@ class ReviewListResource(Resource) :
         
         return {'result':'success'},200
 
-
     # 리뷰 삭제 API
     @jwt_required()
     def delete(self, hotelId) :
@@ -209,11 +207,3 @@ class ReviewListResource(Resource) :
             return{'result':'fail','error':str(e)}, 500
 
         return {'result':'success'},200
-            
-
-
-
-        
-
-
-

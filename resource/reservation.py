@@ -1,6 +1,5 @@
 from flask import request
 from flask_restful import Resource
-
 from mysql_connection import get_connection
 from mysql.connector import Error
 from flask_jwt_extended import jwt_required
@@ -62,7 +61,6 @@ class ReservationResource(Resource) :
     # 28번째 화면 기획서
     @jwt_required()
     def post(self) :
-
         data = request.get_json()
         user_id=get_jwt_identity()
 
@@ -72,9 +70,9 @@ class ReservationResource(Resource) :
 
             ### 2. 쿼리문 만들기
             query = '''insert into reservations
-(petId,userId,hotelId,checkInDate,checkOutDate,content,price)
-values
-(%s,%s,%s,%s,%s,%s,%s);'''
+                    (petId,userId,hotelId,checkInDate,checkOutDate,content,price)
+                    values
+                    (%s,%s,%s,%s,%s,%s,%s);'''
             ### 3. 쿼리에 매칭되는 변수 처리 해준다. 튜플로!
             record = ( data['petId'],user_id,data['hotelId'],
                       data['checkInDate'],data['checkOutDate'],data['content'],data['price'] )
@@ -106,4 +104,3 @@ values
         # 클라이언트에 보내줄 정보(json)와 http 상태 코드를
         # 리턴한다.
         return {"result" : "success"} , 200
-
