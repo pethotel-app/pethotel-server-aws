@@ -126,7 +126,7 @@ class UserLogoutResource(Resource) :
 
 # 아이디찾기
 class UserIdSearchResource(Resource) :
-    def post(self) :
+    def get(self) :
         # { "name": "김이름,
         # "phone": "010-1234-5678"}
 
@@ -166,7 +166,7 @@ class UserIdSearchResource(Resource) :
 
 # 비밀번호찾기
 class UserPasswordSearchResource(Resource) :
-    def post(self) :
+    def get(self) :
         # { "phone": "010-1234-5678",
         # "email": "abcd@naver.com"}
 
