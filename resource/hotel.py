@@ -46,6 +46,36 @@ class HotelSearchResource(Resource) :
 
         return {"result" : "success", "items" : result_list, "count" : len(result_list)}, 200
     
+     # 검색어 저장
+    def put(self) :
+        keyword = request.args.get('keyword')
+
+        try :
+            connection = get_connection()
+
+            query = '''insert into yh_project_db.keyword(keyword)
+                    values(%s);'''
+
+            record = (keyword, )
+
+            cursor = connection.cursor()
+
+            cursor.execute(query, record)
+
+            connection.commit()
+
+            cursor.close()
+            connection.close()
+
+        except Error as e :
+            print(e)
+            cursor.close()
+            connection.close()
+
+            return {"result" : "fail", "error" : str(e)}, 500
+
+        return {"result" : "success"}, 200
+    
 # 호텔 상세정보
 class HotelInfoResource(Resource) :
     @jwt_required(optional=True)
@@ -97,36 +127,6 @@ class HotelInfoResource(Resource) :
 
         return {'result' : 'success' , 'hotel' : resultList[0]}
     
-
-     # 검색어 저장
-    def put(self) :
-        keyword = request.args.get('keyword')
-
-        try :
-            connection = get_connection()
-
-            query = '''insert into yh_project_db.keyword(keyword)
-                    values(%s);'''
-
-            record = (keyword, )
-
-            cursor = connection.cursor()
-
-            cursor.execute(query, record)
-
-            connection.commit()
-
-            cursor.close()
-            connection.close()
-
-        except Error as e :
-            print(e)
-            cursor.close()
-            connection.close()
-
-            return {"result" : "fail", "error" : str(e)}, 500
-
-        return {"result" : "success"}, 200
     
 class HotelSearchRankResource(Resource) :
     # 검색어 순위 가져오기
