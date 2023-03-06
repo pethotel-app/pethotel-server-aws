@@ -39,7 +39,6 @@ api.add_resource(CouponSearchResource,'/benefit/coupon')
 api.add_resource(CouponUseResource, '/benefit/coupon/<int:couponId>')
 
 api.add_resource(HotelInfoResource, '/hotel/<int:hotelId>')
-api.add_resource(HotelSearchResource, '/hotel/searchList/<string:keyword>')
 
 api.add_resource(FavoriteResource, '/favorite/<int:hotelId>')
 api.add_resource(FavoriteListResource, '/favorite')
