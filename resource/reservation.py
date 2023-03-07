@@ -40,12 +40,11 @@ class ReservationResource(Resource) :
             # 따라서 시간을 문자열로 변환해서 보내준다.
             i = 0
             for row in result_list :
+                result_list[i]['checkInDate']=row['checkInDate'].isoformat()
+                result_list[i]['checkOutDate']=row['checkOutDate'].isoformat()
                 result_list[i]['createdAt']=row['createdAt'].isoformat()
                 result_list[i]['updatedAt']=row['updatedAt'].isoformat()
                 i = i+1
-
-
-
 
             cursor.close()
             connection.close()
