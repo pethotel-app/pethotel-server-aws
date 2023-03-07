@@ -89,7 +89,7 @@ class HotelInfoResource(Resource) :
         try :
             connection = get_connection()
 
-            query = '''select h.id,title,addr,longtitude,latitude,tel,naverUrl, small,medium,large
+            query = '''select h.id,title,addr,longtitude,latitude,tel,imgUrl,naverUrl, small,medium,large
                     from hotel h
                     left join price p
                     on h.id = p.hotelId
