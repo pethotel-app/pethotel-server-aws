@@ -6,10 +6,12 @@ from mysql.connector import Error
 
 class HotelSearchResource(Resource) :
     # 검색한 호텔 리스트 가져오기
+    @jwt_required()
     def get(self) :
         keyword = request.args.get('keyword')
         offset = request.args.get('offset')
         limit = request.args.get('limit')
+        user_id = get_jwt_identity()
 
         try :
             connection = get_connection()
@@ -17,15 +19,17 @@ class HotelSearchResource(Resource) :
             query = '''select h.id, h.title, h.imgUrl, ifnull(avg(r.rating),0) as avg, ifnull(count(r.hotelId),0) as cnt,
                     if(f.userId is null, 0, 1) as 'favorite'
                     from yh_project_db.hotel h
-                    left join yh_project_db.follows f on f.hotelId = h.id and f.userId= 2
+                    left join yh_project_db.follows f on f.hotelId = h.id and f.userId= %s
                     left join yh_project_db.reviews r on r.hotelId = h.id
                     where h.title like '%''' + keyword + '''%' or h.addr like '%''' + keyword + '''%'
                     group by h.id
                     limit ''' + offset + ''' , ''' + limit + ''' ; '''
+            
+            record = (user_id, )
 
             cursor = connection.cursor(dictionary= True)
 
-            cursor.execute(query, )
+            cursor.execute(query, record)
 
             result_list = cursor.fetchall()
 
