@@ -102,7 +102,9 @@ class CouponSearchResource(Resource) :
         try : 
             connection = get_connection()
             
-            query = '''select * from coupons
+            query = '''select userId,couponId,title,description,dateOfUseStart,dateOfUseEnd from coupons c
+                    join checkCoupon k
+                    on c.id = k.couponId
                     where userId = %s;'''
 
             record = (userId,)
@@ -111,7 +113,13 @@ class CouponSearchResource(Resource) :
 
             cursor.execute(query , record)
             
-            result_list = cursor.fetchall()
+            resultList = cursor.fetchall()
+
+            i = 0
+            for row in resultList :
+                resultList[i]['dateOfUseStart'] = row['dateOfUseStart'].isoformat()
+                resultList[i]['dateOfUseEnd'] = row['dateOfUseEnd'].isoformat()
+                i = i + 1
 
      
             cursor.close()
@@ -126,7 +134,7 @@ class CouponSearchResource(Resource) :
             return{'error' : str(e)}, 500
         
         
-        return{'result' : 'success' , 'items' : result_list, 'count' : len(result_list)}
+        return{'result' : 'success' , 'items' : resultList, 'count' : len(resultList)}
 
 # 쿠폰 사용
 class CouponUseResource(Resource) :
@@ -138,8 +146,8 @@ class CouponUseResource(Resource) :
         try : 
             connection = get_connection()
             
-            query = '''delete from coupons
-                    where userId = %s and id = %s;'''
+            query = '''delete from checkCoupon
+                    where UserId= %s and couponId= %s;'''
 
             record = (userId,couponId)
 
@@ -156,6 +164,8 @@ class CouponUseResource(Resource) :
             return {'error':str(e)},500
 
         return {'result':'success'},200
+    
+
     
 
 
