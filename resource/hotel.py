@@ -139,8 +139,8 @@ class HotelSearchRankResource(Resource) :
             connection = get_connection()
 
             query = '''select keyword, ifnull(count(keyword),0) as cnt, createdAt
-                    from yh_project_db.keyword
-                    group by keyword having createdAt like '%''' + today + '''%'
+                    from (select * from yh_project_db.keyword where createdAt like '%''' + today + '''%' order by createdAt desc LIMIT 18446744073709551615) as `rank`
+                    group by keyword
                     limit ''' + offset + ''' , ''' + limit + ''' ; '''
 
             cursor = connection.cursor(dictionary= True)
