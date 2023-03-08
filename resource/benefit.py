@@ -50,7 +50,7 @@ class PointSearchResource(Resource) :
 
             return {'error' : '잘못된 유저 아이디입니다.'}, 400
 
-        return{'result' : 'success', 'user' : resultList}
+        return{'result' : 'success', 'items' : resultList}
 
 # 유저 포인트 적립
 class PointAddResource(Resource) : 
@@ -90,6 +90,9 @@ class PointAddResource(Resource) :
             return{"result" : 'fail','error' : str(e)}, 500
 
         return {"result" : "success"} , 200
+    
+
+
 
 # 쿠폰조회
 class CouponSearchResource(Resource) :
@@ -134,7 +137,7 @@ class CouponSearchResource(Resource) :
             return{'error' : str(e)}, 500
         
         
-        return{'result' : 'success' , 'items' : resultList, 'count' : len(resultList)}
+        return{'result' : 'success' , 'couponList' : resultList, 'count' : len(resultList)}
 
 # 쿠폰 사용
 class CouponUseResource(Resource) :
