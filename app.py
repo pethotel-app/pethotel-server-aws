@@ -2,7 +2,7 @@ from flask import Flask
 from flask_jwt_extended import JWTManager
 from flask_restful import Api
 from config import Config
-from resource.benefit import CouponSearchResource, CouponUseResource, PointAddResource, PointSearchResource
+from resource.benefit import CouponSearchResource, CouponUseResource, PointAddResource, PointSearchResource, TotalPointResource
 from resource.favorite import FavoriteListResource, FavoriteResource
 from resource.hotel import HotelInfoResource, HotelPriceResource, HotelSearchRankResource, HotelSearchResource
 from resource.pet import  PetListResource, PetResource
@@ -34,6 +34,7 @@ api.add_resource(UserPasswordSearchResource, '/user/password/search')
 api.add_resource(UserChangePasswordResource, '/user/change/password')
 
 api.add_resource(PointSearchResource, '/benefit/point')
+api.add_resource(TotalPointResource,'/benefit/totalPoint')
 api.add_resource(PointAddResource, '/benefit/addPoint')
 api.add_resource(CouponSearchResource,'/benefit/coupon')
 api.add_resource(CouponUseResource, '/benefit/coupon/<int:couponId>')
