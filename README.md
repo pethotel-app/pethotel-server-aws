@@ -1,1 +1,1 @@
-# pethotel-server-aws
+# serverless 배포 전 repo
